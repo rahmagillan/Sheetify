@@ -98,9 +98,39 @@ def note_width(pitch,length):
     elif length == 4:
         return WHOLE_NOTE_W
 
-#def relative_note_location(pitch):
 
-
+def relative_note_location(pitch, length):
+    if pitch == 0:
+        if length == 0.5:
+            return 7
+        elif length == 1:
+            return 7/2
+        elif length == 2:
+            return 21/2 + 3.5
+        elif length == 4:
+            return 14 + 3.5
+    #lines
+    elif pitch == 64 or pitch == 43:
+        return -7/2
+    elif pitch == 67 or pitch == 47:
+        return 7/2
+    elif pitch == 71 or pitch == 50:
+        return 9/2
+    elif pitch == 74 or pitch == 53:
+        return 11/2
+    elif pitch == 77 or pitch == 57:
+        return 13/2
+    #spaces
+    elif pitch == 65 or pitch == 45:
+        return 0
+    elif pitch == 69 or pitch == 48:
+        return 7
+    elif pitch == 72 or pitch == 52:
+        return 14
+    elif pitch == 76 or pitch == 55:
+        return 21
+    else:
+        return 0
 
 CLEF = "treble" #determine what clef
 if CLEF == "treble":
@@ -114,8 +144,8 @@ title(c)
 ###
 
 
-pitches = [0,65,74,0,65,74,0,65,74,0,65,74,]
-lengths = [0.5,0.5,0.5,1,1,1,2,2,2,4,4,4]
+pitches = [0, 65, 74, 0, 65, 74, 0, 65, 74, 0, 65, 74]
+lengths = [0.5, 0.5, 0.5, 1, 1, 1, 2, 2, 2, 4, 4, 4]
 
 EIGHTH_REST_L = 14
 EIGHTH_REST_W = 14
@@ -138,7 +168,7 @@ HALF_NOTE_L = 28
 HALF_NOTE_W = 10
 HALF_NOTE_UP_L = 28
 HALF_NOTE_UP_W = 10
-WHOLE_NOTE_L = 7
+WHOLE_NOTE_L = 8
 WHOLE_NOTE_W = 12
 
 
@@ -151,10 +181,21 @@ draw_clefs(c, 50, 641, 10)
 c.drawImage("time_signatures.jpg", 85, 654,width=11.2,height=28) #time signature @ 85
 
 #draw notes
+
+limit = 592
 running_width = 0
+counter = 0
+i_counter = 0
 for i in range(len(pitches)):
     running_width += note_width(pitches[i],lengths[i])
-    draw_note(c, pitches[i],lengths[i],100+running_width+i*10,654)
+    if running_width + 100+running_width+i_counter*50 <= limit:
+        draw_note(c, pitches[i],lengths[i],100+running_width+i_counter*50,653+relative_note_location(pitches[i],lengths[i])- counter*65)
+    else:
+        draw_note(c, pitches[i], lengths[i], 100+running_width +i_counter*50, 653 + relative_note_location(pitches[i], lengths[i]) - counter*65)
+        running_width = 0
+        i_counter = 0
+        counter += 1
+    i_counter += 1
 
 #draw staff
 while True:
