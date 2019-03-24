@@ -173,6 +173,7 @@ def num_ledger(pitch):
     elif 94 <= pitch <= 97 or 24 <= pitch <= 26:
         return 5
 
+
 CLEF = "treble" #determine what clef
 if CLEF == "treble":
     clef_img = "treble_clef.jpg"
@@ -185,8 +186,8 @@ title(c)
 ###
 
 
-pitches = [0, 62, 74, 0, 62, 74, 0, 65, 74, 0, 65, 74]
-lengths = [0.5, 0.5, 0.5, 1, 1, 1, 2, 2, 2, 4, 4, 4]
+pitches = [0, 62, 74, 0, 62, 74, 0, 65, 74, 0, 65, 74,70,74,62]
+lengths = [0.5, 0.5, 0.5, 1, 1, 1,0.5, 2, 1, 4, 4, 4,2,1,2]
 
 EIGHTH_REST_L = 14
 EIGHTH_REST_W = 14
@@ -227,17 +228,76 @@ limit = 592
 running_width = 0
 counter = 0
 i_counter = 0
+measurecounter = 0
+newlength = 0
+
+iplaceholder = 0
+heightholder = 0
+rw = 0
 for i in range(len(pitches)):
     running_width += note_width(pitches[i],lengths[i])
+
     if running_width + 100+running_width+i_counter*50 <= limit:
-        draw_note(c, pitches[i],lengths[i],100+running_width+i_counter*50,653+relative_note_location(pitches[i],lengths[i])- counter*65)
+        if (measurecounter + lengths[i]) <= 4: #:)
+            draw_note(c, pitches[i],lengths[i],100+running_width+i_counter*50,653+relative_note_location(pitches[i],lengths[i])- counter*65)
     else:
-        draw_note(c, pitches[i], lengths[i], 100+running_width +i_counter*50, 653 + relative_note_location(pitches[i], lengths[i]) - counter*65)
+        if (measurecounter + lengths[i]) <= 4:  #:)
+            draw_note(c, pitches[i], lengths[i], 100+running_width +i_counter*50, 653 + relative_note_location(pitches[i], lengths[i]) - counter*65)
         running_width = 0
         i_counter = 0
         counter += 1
     i_counter += 1
+    if (measurecounter + lengths[i]) == 4: #:) \/ \/ \//\/\/\/\/\/\/\/\/\/\/\/\/\
+        #print("line")
+        c.line(100+running_width +i_counter*50,653-counter*65,(100+running_width +i_counter*50),653+29-counter*65)
+        measurecounter = 0
+    elif (measurecounter + lengths[i]) > 4:
+        newlength = lengths[i]/2
+        iplaceholder += i_counter
+        heightholder += counter
+        rw += running_width
+        if running_width + 100 + running_width + i_counter * 50 <= limit:
+            draw_note(c, pitches[i], newlength, 100 + running_width + i_counter * 50,653 + relative_note_location(pitches[i], newlength) - counter * 65)
+            i_counter += 1
+            c.line(100 + running_width + i_counter * 50, 653 - counter * 65, (100 + running_width + i_counter * 50),653 + 29 - counter * 65)
+            i_counter += 1
+            if running_width + 100 + running_width + i_counter * 50 <= limit:
+                #print (running_width + 100 + running_width + i_counter * 50)
+                draw_note(c, pitches[i], newlength, 100 + running_width + i_counter * 50,653 + relative_note_location(pitches[i], newlength) - counter * 65)
+                c.arc(100 + rw + iplaceholder * 50, 653 - (counter - 1) * 65, 100 + running_width + i_counter * 50, 653 - counter * 65, 0, 180)
+            else:
+                i_counter = 0
+                counter += 1
+                draw_note(c, pitches[i], newlength, 100 + running_width + i_counter * 50,653 + relative_note_location(pitches[i], newlength) - counter * 65)
 
+
+                c.arc(100 + rw + iplaceholder * 50, 653 - (counter-2) * 65, limit, 653 - (counter-1) * 65,90,90)
+                c.arc(50, 653 - (counter-1) * 65, 100 + running_width + i_counter * 50 , 653 - counter * 65, 0, 90)
+                running_width = 0
+                i_counter += 1
+            rw = 0
+            iplaceholder = 0
+            heightholder = 0
+            i_counter += 1
+
+        else:
+            draw_note(c, pitches[i], newlength, 100 + running_width + i_counter * 50,653 + relative_note_location(pitches[i], newlength) - counter * 65)
+            running_width = 0
+            i_counter = 1
+            counter += 1
+            c.line(100 + running_width + i_counter * 50, 653 - counter * 65, (100 + running_width + i_counter * 50),
+                   653 + 29 - counter * 65)
+            i_counter += 1
+            draw_note(c, pitches[i], newlength, 100 + running_width + i_counter * 50,653 + relative_note_location(pitches[i], newlength) - counter * 65)
+            c.arc(100 + rw + iplaceholder * 50, 653 - (counter - 1) * 65, 100 + running_width + i_counter * 50,653 - counter * 65, 0, 180)
+            i_counter += 1
+        #print("tie")  # tie
+
+        measurecounter = lengths[i]/2
+    else:
+        measurecounter +=lengths[i] #: ) /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+
+#c.line()
 #draw staff
 while True:
     loc = 672
