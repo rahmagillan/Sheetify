@@ -39,7 +39,15 @@ def draw_note(c, pitch, length, x, y):
             c.drawImage("half_rest.jpg", x, y, width=HALF_REST_W, height=HALF_REST_L)
         elif length == 4:
             c.drawImage("whole_rest.jpg", x, y, width=WHOLE_REST_W, height=WHOLE_REST_L)
+    #notes
     elif length == 0.5:
+        if ledger_line(pitch) == True:
+            for i in range (num_ledger(pitch)):
+                if ledger_above(pitch) == True:
+                    c.line(x - 3, y + 7 / 2+i*7, x + 3 , y + 7 / 2+i*7)
+                else:
+                    c.line(x - 3, y + 7 / 2-i*7, x + 3, y + 7 / 2-i*7)
+
         if flipped(pitch) == True:
             c.drawImage("eigth_up.jpg", x, y, width=EIGHT_NOTE_UP_W, height=EIGHT_NOTE_UP_L)
         else:
@@ -132,6 +140,39 @@ def relative_note_location(pitch, length):
     else:
         return 0
 
+
+def ledger_line(pitch):
+    if 21 <= pitch <= 40 or 81 <= pitch <= 108 or pitch == 60:
+        return True
+    else:
+        return False
+
+
+def ledger_above(pitch):
+    if CLEF == "treble":
+        if 81 <= pitch <= 108:
+            return True
+        else:
+            return False
+    else:
+        if pitch == 60:
+            return True
+        else:
+            return False
+
+
+def num_ledger(pitch):
+    if 81 <= pitch <= 83 or pitch == 60 or 38 <= pitch <= 40:
+        return 1
+    elif 84 <= pitch <= 86 or 34 <= pitch <= 37:
+        return 2
+    elif 87 <= pitch <= 90 or 31 <= pitch <= 33:
+        return 3
+    elif 91 <= pitch <= 93 or 27 <= pitch <= 30:
+        return 4
+    elif 94 <= pitch <= 97 or 24 <= pitch <= 26:
+        return 5
+
 CLEF = "treble" #determine what clef
 if CLEF == "treble":
     clef_img = "treble_clef.jpg"
@@ -144,7 +185,7 @@ title(c)
 ###
 
 
-pitches = [0, 65, 74, 0, 65, 74, 0, 65, 74, 0, 65, 74]
+pitches = [0, 62, 74, 0, 62, 74, 0, 65, 74, 0, 65, 74]
 lengths = [0.5, 0.5, 0.5, 1, 1, 1, 2, 2, 2, 4, 4, 4]
 
 EIGHTH_REST_L = 14
